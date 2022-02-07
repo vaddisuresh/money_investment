@@ -1,0 +1,66 @@
+<div id='accounts_div'>
+  <%= hidden_field_tag "max_balance_amt",  Account.get_account_balances_arry.sum%>
+  <div style="padding: 50px">
+    <%= "Enter Investment Amount here"%>: <%= text_field_tag "amount", "", :onkeypress=>"return isNumberKey(event)"%>
+    <input type="submit" value="Submit" onclick="UpdateAccountBalance()">
+  </div> 
+  <style>
+    table {
+      font-family: arial, sans-serif;
+      border-collapse: collapse;
+      width: 100%;
+    }
+
+    td, th {
+      border: 1px solid #dddddd;
+      text-align: center;
+      padding: 8px;
+    }
+
+    tr:nth-child(even) {
+      background-color: #dddddd;
+    }
+  </style>
+  <body>
+    <table>
+      <tr style="color: red">
+        <th>Account</th>
+        <th>Balance</th>
+      </tr>
+      <% @accounts.each do |account| %>
+        </tr>
+          <td><%= account.name%></td>
+          <td><%= account.balance%></td>
+        <tr>
+      <%end%>
+    </table>
+  </body>
+</div>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script>
+  function UpdateAccountBalance() {
+    var entered_amount = $("#amount").val()
+    var max_balance_amt = $("#max_balance_amt").val()
+    if (entered_amount == "") {
+      alert("Please Enter Amount");
+      return false;
+    }else if(parseFloat(max_balance_amt) < parseFloat($("#amount").val())){
+      alert("Amount should be less than or equal to "+max_balance_amt);
+      return false;
+    }else{
+      $.ajax({
+        type: 'post',
+        url: 'accounts/update_accounts?amount='+entered_amount
+      });
+    }
+  }
+
+  function isNumberKey(evt){
+    var charCode = (evt.which) ? evt.which : evt.keyCode
+    if (charCode > 31 && (charCode != 46 &&(charCode < 48 || charCode > 57))){
+        return false;
+    }else{
+      return true;
+    }
+  }
+</script>
